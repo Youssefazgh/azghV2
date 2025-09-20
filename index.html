@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alle Geräte - Hochschule Bochum</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="header">
+        <div class="logo-section">
+            <div class="logo">BO</div>
+            <div class="header-text">
+                <h1>Hochschule Bochum</h1>
+                <p>Technik Wirtschaft Gesundheit</p>
+            </div>
+        </div>
+        <div class="nav-links">
+            <a href="#">Studium</a>
+            <a href="#">Forschung</a>
+            <a href="#">Service</a>
+            <a href="#">Die BO</a>
+        </div>
+    </div>
+
+    <!-- Übersichtsliste -->
+    <div id="main-view">
+        <h2 class="title">Alle Geräte</h2>
+        
+        <div class="search-controls">
+            <input type="text" id="search" placeholder="Device suchen..." onkeyup="searchDevices()">
+        </div>
+        
+        <div class="device-grid" id="device-grid">
+            <!-- Devices werden hier eingefügt -->
+        </div>
+    </div>
+
+    <!-- Device Detail Ansicht -->
+    <div id="device-detail" class="device-detail">
+        <button class="back-button" onclick="showMainView()">← Zurück zur Übersicht</button>
+        
+        <h2 class="device-detail-title" id="detail-title">Device X</h2>
+        
+        <div class="device-specs">
+            <div class="spec-group">
+                <div class="spec-label">Device-Nummer</div>
+                <div class="spec-value" id="detail-number">-</div>
+            </div>
+            <div class="spec-group">
+                <div class="spec-label">Standort</div>
+                <div class="spec-value" id="detail-location">-</div>
+            </div>
+            <div class="spec-group">
+                <div class="spec-label">Status</div>
+                <div class="spec-value" id="detail-status">-</div>
+            </div>
+            <div class="spec-group">
+                <div class="spec-label">Typ</div>
+                <div class="spec-value" id="detail-type">Multimedia-Gerät</div>
+            </div>
+            <div class="spec-group">
+                <div class="spec-label">Hersteller</div>
+                <div class="spec-value" id="detail-manufacturer">Hochschule Bochum</div>
+            </div>
+            <div class="spec-group">
+                <div class="spec-label">Letzte Wartung</div>
+                <div class="spec-value" id="detail-maintenance">-</div>
+            </div>
+        </div>
+        
+        <div class="device-actions">
+            <button class="btn primary" id="toggle-status-detail" onclick="toggleDeviceStatus()">Status ändern</button>
+            <button class="btn" onclick="copyDeviceLink()">🔗 Link kopieren</button>
+            <button class="btn" onclick="showQRCode()">📱 QR-Code anzeigen</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
