@@ -1,82 +1,178 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alle Geräte - Hochschule Bochum</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Geräteübersicht</title>
+  <style>
+    :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+    body { margin: 0; padding: 24px; }
+    h1 { margin: 0 0 8px; font-size: 20px; }
+    .muted { color: #666; font-size: 14px; }
+
+    /* Kategorie-Leiste */
+    .category-bar { display:flex; flex-wrap:wrap; gap:.5rem; margin:16px 0 20px; }
+    .category-btn {
+      border:1px solid currentColor; padding:.35rem .7rem; border-radius:999px; cursor:pointer;
+      background:#fff;
+    }
+    .category-btn[aria-pressed="true"] { font-weight:600; }
+
+    /* Grid für Geräte */
+    .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap:14px; }
+    .card {
+      border:1px solid #ddd; border-radius:12px; padding:14px;
+      display:flex; flex-direction:column; gap:8px;
+    }
+    .card h3 { margin:0; font-size:16px; }
+    .kv { display:flex; gap:6px; align-items:center; font-size:14px; }
+    .kv b { min-width:84px; font-weight:600; color:#333; }
+    .badge { display:inline-block; padding:.1rem .5rem; border:1px solid #ccc; border-radius:999px; font-size:12px; }
+
+    /* "Letzte Wartung" überall verstecken (falls im Markup vorhanden) */
+    .last-maintenance, [data-field="lastMaintenance"], .device-last-maintenance { display:none !important; }
+
+    /* Tabellen-Fall (falls du eine Tabelle verwendest) */
+    table.hide-last-maintenance th.is-last-maintenance,
+    table.hide-last-maintenance td.is-last-maintenance { display:none; }
+  </style>
 </head>
 <body>
-    <div class="header">
-        <div class="logo-section">
-            <div class="logo">BO</div>
-            <div class="header-text">
-                <h1>Hochschule Bochum</h1>
-                <p>Technik Wirtschaft Gesundheit</p>
-            </div>
-        </div>
-        <div class="nav-links">
-            <a href="#">Studium</a>
-            <a href="#">Forschung</a>
-            <a href="#">Service</a>
-            <a href="#">Die BO</a>
-        </div>
-    </div>
+  <header>
+    <h1>Geräte</h1>
+    <div class="muted">Raum ist auf <b>2.29</b> gesetzt · Status bleibt unverändert</div>
+  </header>
 
-    <!-- Übersichtsliste -->
-    <div id="main-view">
-        <h2 class="title">Alle Geräte</h2>
-        
-        <div class="search-controls">
-            <input type="text" id="search" placeholder="Device suchen..." onkeyup="searchDevices()">
-        </div>
-        
-        <div class="device-grid" id="device-grid">
-            <!-- Devices werden hier eingefügt -->
-        </div>
-    </div>
+  <!-- Kategorie-Filter (Buttons werden per JS generiert) -->
+  <nav class="category-bar" id="categoryBar" hidden></nav>
 
-    <!-- Device Detail Ansicht -->
-    <div id="device-detail" class="device-detail">
-        <button class="back-button" onclick="showMainView()">← Zurück zur Übersicht</button>
-        
-        <h2 class="device-detail-title" id="detail-title">Device X</h2>
-        
-        <div class="device-specs">
-            <div class="spec-group">
-                <div class="spec-label">Device-Nummer</div>
-                <div class="spec-value" id="detail-number">-</div>
-            </div>
-            <div class="spec-group">
-                <div class="spec-label">Standort</div>
-                <div class="spec-value" id="detail-location">-</div>
-            </div>
-            <div class="spec-group">
-                <div class="spec-label">Status</div>
-                <div class="spec-value" id="detail-status">-</div>
-            </div>
-            <div class="spec-group">
-                <div class="spec-label">Typ</div>
-                <div class="spec-value" id="detail-type">Multimedia-Gerät</div>
-            </div>
-            <div class="spec-group">
-                <div class="spec-label">Hersteller</div>
-                <div class="spec-value" id="detail-manufacturer">Hochschule Bochum</div>
-            </div>
-            <div class="spec-group">
-                <div class="spec-label">Letzte Wartung</div>
-                <div class="spec-value" id="detail-maintenance">-</div>
-            </div>
-        </div>
-        
-        <div class="device-actions">
-            <button class="btn primary" id="toggle-status-detail" onclick="toggleDeviceStatus()">Status ändern</button>
-            <button class="btn" onclick="copyDeviceLink()">🔗 Link kopieren</button>
-            <button class="btn" onclick="showQRCode()">📱 QR-Code anzeigen</button>
-        </div>
-    </div>
+  <!-- Geräte-Liste: jedes Element braucht mindestens data-category und optional data-status -->
+  <main class="grid" id="deviceGrid">
+    <!-- Beispielkarten – du kannst diese duplizieren/anpassen -->
+    <article class="card" data-category="Laptop" data-status="OK" data-room="2.29">
+      <h3>Lenovo ThinkPad T14</h3>
+      <div class="kv"><b>Kategorie:</b> <span class="badge">Laptop</span></div>
+      <div class="kv"><b>Status:</b> <span class="status">OK</span></div>
+      <div class="kv"><b>Raum:</b> <span class="room">2.29</span></div>
+      <!-- Falls irgendwo "Letzte Wartung" im HTML steht, wird es automatisch entfernt/versteckt -->
+      <!-- <div class="last-maintenance">Letzte Wartung: 01.02.2025</div> -->
+    </article>
 
-    <script src="script.js"></script>
+    <article class="card" data-category="Drucker" data-status="Wartung" data-room="2.29">
+      <h3>HP LaserJet Pro</h3>
+      <div class="kv"><b>Kategorie:</b> <span class="badge">Drucker</span></div>
+      <div class="kv"><b>Status:</b> <span class="status">Wartung</span></div>
+      <div class="kv"><b>Raum:</b> <span class="room">2.29</span></div>
+    </article>
+
+    <article class="card" data-category="Zubehör, Netzwerk" data-status="OK" data-room="2.29">
+      <h3>Netgear Switch 24-Port</h3>
+      <div class="kv"><b>Kategorie:</b> <span class="badge">Zubehör</span> <span class="badge">Netzwerk</span></div>
+      <div class="kv"><b>Status:</b> <span class="status">OK</span></div>
+      <div class="kv"><b>Raum:</b> <span class="room">2.29</span></div>
+    </article>
+  </main>
+
+  <script>
+  (function(){
+    document.addEventListener('DOMContentLoaded', () => {
+      setAllRooms('2.29');
+      removeLastMaintenanceEverywhere();
+      setupCategoryFilter();
+    });
+
+    function setAllRooms(roomValue){
+      // data-room vereinheitlichen
+      document.querySelectorAll('[data-room]').forEach(el=>{
+        el.setAttribute('data-room', roomValue);
+      });
+      // sichtbare Raumtexte angleichen
+      document.querySelectorAll('.room, .device-room, .room-value').forEach(el=>{
+        el.textContent = roomValue;
+      });
+      // Notfall: freier Text "Raum: X" ersetzen
+      document.querySelectorAll('body *').forEach(el=>{
+        if (el.childNodes.length === 1 && el.childNodes[0].nodeType === 3) {
+          const t = el.textContent;
+          if (/(^|\b)(Raum|Room)\s*:\s*/i.test(t)) el.textContent = t.replace(/(Raum|Room)\s*:\s*.*/i, `$1: ${roomValue}`);
+        }
+      });
+    }
+
+    function removeLastMaintenanceEverywhere(){
+      // Typische Felder entfernen/verstecken
+      document.querySelectorAll('.last-maintenance, .maintenance, [data-field="lastMaintenance"], [data-field="maintenance"]').forEach(el=>el.remove());
+
+      // Tabellen-Spalte anhand Header-Text erkennen und ausblenden
+      document.querySelectorAll('table').forEach(table=>{
+        const headers = Array.from(table.querySelectorAll('thead th, tr:first-child th'));
+        let idx = -1;
+        headers.forEach((th,i)=>{
+          if (/letzte\s*wartung|last\s*maintenance/i.test(th.textContent)) idx = i;
+        });
+        if (idx>-1){
+          table.classList.add('hide-last-maintenance');
+          headers[idx].classList.add('is-last-maintenance');
+          table.querySelectorAll('tbody tr').forEach(tr=>{
+            const cell = tr.children[idx];
+            if (cell) cell.classList.add('is-last-maintenance');
+          });
+        }
+      });
+
+      // Etwaige Label-Zeilen mit dem Text entfernen
+      document.querySelectorAll('.card, li, .device').forEach(container=>{
+        Array.from(container.querySelectorAll('*')).forEach(el=>{
+          if (/letzte\s*wartung|last\s*maintenance/i.test(el.textContent.trim())){
+            if (el.children.length === 0 || el.textContent.includes(':')) el.remove();
+          }
+        });
+      });
+    }
+
+    function setupCategoryFilter(){
+      const items = Array.from(document.querySelectorAll('[data-category]'));
+      if (!items.length) return;
+
+      // Kategorien sammeln (Komma/Pipe getrennt möglich)
+      const set = new Set();
+      items.forEach(el=>{
+        const raw = (el.getAttribute('data-category')||'')+'';
+        raw.split(/[,|]/).map(s=>s.trim()).filter(Boolean).forEach(c=>set.add(c));
+      });
+
+      const bar = document.getElementById('categoryBar');
+      if (!bar) return;
+
+      const makeBtn = (name, value) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'category-btn';
+        btn.textContent = name;
+        btn.dataset.value = value;
+        btn.setAttribute('aria-pressed', value==='' ? 'true':'false');
+        btn.addEventListener('click', ()=>{
+          bar.querySelectorAll('.category-btn').forEach(b=>b.setAttribute('aria-pressed','false'));
+          btn.setAttribute('aria-pressed','true');
+          const v = btn.dataset.value;
+
+          items.forEach(el=>{
+            const cats = (el.getAttribute('data-category')||'').split(/[,|]/).map(s=>s.trim());
+            // Nur Sichtbarkeit filtern; Status NICHT ändern
+            el.hidden = v && !cats.includes(v);
+          });
+        });
+        return btn;
+      };
+
+      bar.innerHTML = '';
+      bar.appendChild(makeBtn('Alle', ''));
+      Array.from(set).sort((a,b)=>a.localeCompare(b,'de')).forEach(c=>{
+        bar.appendChild(makeBtn(c, c));
+      });
+      bar.hidden = false;
+    }
+  })();
+  </script>
 </body>
-
 </html>
